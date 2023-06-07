@@ -5,5 +5,5 @@ const POINTS = 3;
 export default class TripPointModel {
   #tripPoints = Array.from({length: POINTS}, generateMockPoint);
 
-  getTripPoints = () => this.#tripPoints;
+  getTripPoints = () => []; // this.#tripPoints;
 }

@@ -4,6 +4,7 @@ import TripEventsFormView from '../view/trip-events-form-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import TripEventView from '../view/trip-event-view.js';
 import TripEventsSortView from '../view/trip-events-sort-view.js';
+import TripEmptyView from '../view/trip-empty-view.js';
 
 export default class TripPresenter {
   #tripListView = new TripEventsListView();
@@ -57,10 +58,14 @@ export default class TripPresenter {
   };
 
   init = () => {
-    render(new TripEventsSortView(), this.#tripEventsComponent);
-    render(this.#tripListView, this.#tripEventsComponent);
-    for (let i = 0; i < 3; i++) {
-      this.#renderTripPoint(this.#tripPoints[i]);
+    if (this.#tripPoints.length !== 0) {
+      render(new TripEventsSortView(), this.#tripEventsComponent);
+      render(this.#tripListView, this.#tripEventsComponent);
+      for (let i = 0; i < 3; i++) {
+        this.#renderTripPoint(this.#tripPoints[i]);
+      }
+    } else {
+      render(new TripEmptyView(), this.#tripEventsComponent);
     }
   };
 }
