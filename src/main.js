@@ -7,8 +7,8 @@ const tripControlsFiltersComponent = document.querySelector('.trip-controls__fil
 const tripEventsComponent = document.querySelector('.trip-events');
 
 const tripPointsModel = new TripPointModel();
-const tripPresenter = new TripPresenter(tripPointsModel);
+const tripPresenter = new TripPresenter(tripEventsComponent, tripPointsModel);
 
 render(new TripEventsFilterView(), tripControlsFiltersComponent);
 
-tripPresenter.init(tripEventsComponent);
+tripPresenter.init();
