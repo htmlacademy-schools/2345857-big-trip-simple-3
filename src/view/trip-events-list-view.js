@@ -10,11 +10,13 @@ const createItemTemplate = () => `
 `;
 
 export default class TripEventsListView extends AbstractView {
-  getTemplate = () => createListTemplate();
+  get template() {
+    return createListTemplate();
+  }
 
   addComponent(component) {
     const itemTemplate = createElement(createItemTemplate());
     render(component, itemTemplate);
-    this.getElement().append(itemTemplate);
+    this.element.append(itemTemplate);
   }
 }

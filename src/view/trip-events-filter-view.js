@@ -14,5 +14,7 @@ const createTemplate = () =>
   </form>`;
 
 export default class TripEventsFilterView extends AbstractView {
-  getTemplate = () => createTemplate();
+  get template() {
+    return createTemplate();
+  }
 }

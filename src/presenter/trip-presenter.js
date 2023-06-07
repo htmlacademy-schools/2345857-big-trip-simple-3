@@ -6,27 +6,61 @@ import TripEventView from '../view/trip-event-view.js';
 import TripEventsSortView from '../view/trip-events-sort-view.js';
 
 export default class TripPresenter {
-  tripListView = new TripEventsListView();
-  #container = null;
+  #tripListView = new TripEventsListView();
+  #tripEventsComponent = null;
   #tripPoints = null;
   #tripPointsModel = null;
 
-  constructor(tripPointsModel) {
+  constructor(tripEventsComponent, tripPointsModel) {
+    this.#tripEventsComponent = tripEventsComponent;
     this.#tripPointsModel = tripPointsModel;
+    this.#tripPoints = [...this.#tripPointsModel.getTripPoints()];
   }
 
-  init = (container) => {
-    this.#tripPoints = [...this.#tripPointsModel.getTripPoints()];
-    this.#container = container;
+  #renderTripPoint = (tripPoint) => {
+    const tripView = new TripEventView(tripPoint);
+    const tripFormView = new TripEventsFormView(tripPoint);
 
-    render(new TripEventsSortView(), this.#container);
+    const replacePointToForm = () => {
+      this.#tripListView.element.replaceChild(tripFormView.element, tripView.element);
+    };
 
-    this.tripListView.addComponent(new TripEventsFormView(this.#tripPoints[0]));
+    const replaceFormToPoint = () => {
+      this.#tripListView.element.replaceChild(tripView.element, tripFormView.element);
+    };
 
+    const closeEditFormOnEcsapeKey = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        replaceFormToPoint();
+        document.body.removeEventListener('keydown', closeEditFormOnEcsapeKey);
+      }
+    };
+
+    tripView.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replacePointToForm();
+      document.body.addEventListener('keydown', closeEditFormOnEcsapeKey);
+    });
+
+    tripFormView.element.querySelector('.event__save-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      replaceFormToPoint();
+      document.body.removeEventListener('keydown', closeEditFormOnEcsapeKey);
+    });
+
+    tripFormView.element.querySelector('.event__reset-btn').addEventListener('click', () => {
+      replaceFormToPoint();
+      document.body.removeEventListener('keydown', closeEditFormOnEcsapeKey);
+    });
+
+    render(tripView, this.#tripListView.element);
+  };
+
+  init = () => {
+    render(new TripEventsSortView(), this.#tripEventsComponent);
+    render(this.#tripListView, this.#tripEventsComponent);
     for (let i = 0; i < 3; i++) {
-      this.tripListView.addComponent(new TripEventView(this.#tripPoints[i]));
+      this.#renderTripPoint(this.#tripPoints[i]);
     }
-
-    render(this.tripListView, this.#container);
   };
 }

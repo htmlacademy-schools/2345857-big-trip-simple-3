@@ -180,5 +180,7 @@ export default class TripEventsFormView extends AbstractView {
     this.#tripPoint = tripPoint;
   }
 
-  getTemplate = () => createTemplate(this.#tripPoint);
+  get template() {
+    return createTemplate(this.#tripPoint);
+  }
 }

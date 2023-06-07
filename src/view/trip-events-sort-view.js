@@ -30,5 +30,7 @@ const createTemplate = () => `
 `;
 
 export default class TripEventsSortView extends AbstractView {
-  getTemplate = () => createTemplate();
+  get template() {
+    return createTemplate();
+  }
 }
