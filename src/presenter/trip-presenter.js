@@ -1,11 +1,10 @@
-import { render, replace } from '../framework/render.js';
+import { render } from '../framework/render.js';
 
-import TripEventsFormView from '../view/trip-events-form-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
-import TripEventView from '../view/trip-event-view.js';
 import TripEventsSortView from '../view/trip-events-sort-view.js';
 import TripEmptyView from '../view/trip-empty-view.js';
 import {getMockSorts} from '../mock/mock-sort';
+import PointPresenter from './point-presenter';
 
 export default class TripPresenter {
   #tripListView = new TripEventsListView();
@@ -13,6 +12,7 @@ export default class TripPresenter {
   #tripPoints = null;
   #tripPointsModel = null;
   #sorts = getMockSorts();
+  #pointPresenters = new Map();
 
   constructor(tripEventsComponent, tripPointsModel) {
     this.#tripEventsComponent = tripEventsComponent;
@@ -21,38 +21,15 @@ export default class TripPresenter {
   }
 
   #renderTripPoint = (tripPoint) => {
-    const tripView = new TripEventView(tripPoint);
-    const tripFormView = new TripEventsFormView(tripPoint);
-
-    const replacePointToForm = () => replace(tripFormView, tripView);
-
-    const replaceFormToPoint = () => replace(tripView, tripFormView);
-
-    const closeEditFormOnEscapeKey = (event) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        replaceFormToPoint();
-        document.body.removeEventListener('keydown', closeEditFormOnEscapeKey);
+    const pointPresenter = new PointPresenter(
+      this.#tripListView.element,
+      tripPoint,
+      () => {
+        this.#pointPresenters.forEach((it) => it.resetView());
       }
-    };
-
-    tripView.setRollupClickHandler(() => {
-      replacePointToForm();
-      document.body.addEventListener('keydown', closeEditFormOnEscapeKey);
-    });
-
-    tripFormView.setSaveClickHandler((evt) => {
-      evt.preventDefault();
-      replaceFormToPoint();
-      document.body.removeEventListener('keydown', closeEditFormOnEscapeKey);
-    });
-
-    tripFormView.setResetClickHandler(() => {
-      replaceFormToPoint();
-      document.body.removeEventListener('keydown', closeEditFormOnEscapeKey);
-    });
-
-    render(tripView, this.#tripListView.element);
+    );
+    pointPresenter.init();
+    this.#pointPresenters.set(tripPoint.id, pointPresenter);
   };
 
   init = () => {
