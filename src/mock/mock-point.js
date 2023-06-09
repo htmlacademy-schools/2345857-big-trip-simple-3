@@ -5,7 +5,7 @@ import RandomUtils from './utils/random-utils';
 
 
 const getRandomType = () =>
-  Constants.TRIP_TYPES[RandomUtils.generateRandomInt(0, Constants.TRIP_TYPES.length - 1)];
+  Constants.TripTypes[RandomUtils.generateRandomInt(0, Constants.TripTypes.length - 1)];
 
 export const generateMockPoint = () => {
   const type = getRandomType();

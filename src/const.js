@@ -1,3 +1,10 @@
 export default class Constants {
-  static TRIP_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+  static TripTypes = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+  static SortTypes = {
+    DAY: 'day',
+    EVENT: 'event',
+    TIME: 'time',
+    PRICE: 'price',
+    OFFERS: 'offers'
+  };
 }
