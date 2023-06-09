@@ -5,12 +5,14 @@ import TripEventsListView from '../view/trip-events-list-view.js';
 import TripEventView from '../view/trip-event-view.js';
 import TripEventsSortView from '../view/trip-events-sort-view.js';
 import TripEmptyView from '../view/trip-empty-view.js';
+import {getMockSorts} from '../mock/mock-sort';
 
 export default class TripPresenter {
   #tripListView = new TripEventsListView();
   #tripEventsComponent = null;
   #tripPoints = null;
   #tripPointsModel = null;
+  #sorts = getMockSorts();
 
   constructor(tripEventsComponent, tripPointsModel) {
     this.#tripEventsComponent = tripEventsComponent;
@@ -55,7 +57,7 @@ export default class TripPresenter {
 
   init = () => {
     if (this.#tripPoints.length !== 0) {
-      render(new TripEventsSortView(), this.#tripEventsComponent);
+      render(new TripEventsSortView(this.#sorts), this.#tripEventsComponent);
       render(this.#tripListView, this.#tripEventsComponent);
       for (let i = 0; i < 3; i++) {
         this.#renderTripPoint(this.#tripPoints[i]);

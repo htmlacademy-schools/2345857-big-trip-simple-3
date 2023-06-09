@@ -11,5 +11,6 @@ export default class Converters {
   static convertToTime = (date) => dayjs(date).format(TIME_FORMAT);
   static convertToUpperCase = (type) => type.charAt(0).toUpperCase() + type.slice(1);
   static convertToFormDate = (date) => dayjs(date).format(FORM_DATE_FORMAT);
+  static isTripDateInPast = (date) => dayjs(date).isBefore(dayjs(), 'D') || dayjs(date).isSame(dayjs(), 'D');
 }
 
