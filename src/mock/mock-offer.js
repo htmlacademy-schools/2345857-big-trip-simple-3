@@ -1,5 +1,5 @@
-import { createOffer } from '../data/offer';
-import { generateRandomInt } from './utils/random';
+import Offer from '../data/offer';
+import RandomUtils from './utils/random-utils';
 
 export const OFFER_TITLES = [];
 
@@ -67,10 +67,10 @@ OFFER_TITLES['restaurant'] = [
 ];
 
 const generateRandomOffer = (id, type) =>
-  createOffer(
+  new Offer(
     id,
     OFFER_TITLES[type][id],
-    generateRandomInt(100, 1000),
+    RandomUtils.generateRandomInt(100, 1000),
   );
 
 export const getOffers = (type) => {
@@ -82,4 +82,4 @@ export const getOffers = (type) => {
 };
 
 export const getRandomOfferId = (type) =>
-  generateRandomInt(0, OFFER_TITLES[type].length);
+  RandomUtils.generateRandomInt(0, OFFER_TITLES[type].length);

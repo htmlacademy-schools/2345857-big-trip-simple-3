@@ -1,7 +1,7 @@
 import { getDestination } from '../mock/mock-destination.js';
 import { getOffers } from '../mock/mock-offer.js';
-import { convertToDateTime, convertToEventDate, convertToEventDateTime, convertToTime } from '../utils/converters.js';
-import AbstractView from './abstract-view.js';
+import Converters from '../utils/converters.js';
+import AbstractView from '../framework/view/abstract-view';
 
 const createOfferTemplates = (offers) =>
   offers.map((it) => `
@@ -19,12 +19,12 @@ const createTemplate = (point) => {
   const offerObjs = getOffers(type).filter((it) => (it.id in offers));
 
   // Даты и время
-  const eventDateTime = convertToEventDateTime(point.dateFrom);
-  const eventDate = convertToEventDate(point.dateFrom);
-  const fromDateTime = convertToDateTime(point.dateFrom);
-  const fromTime = convertToTime(point.dateFrom);
-  const toDateTime = convertToDateTime(point.dateTo);
-  const toTime = convertToTime(point.dateTo);
+  const eventDateTime = Converters.convertToEventDateTime(point.dateFrom);
+  const eventDate = Converters.convertToEventDate(point.dateFrom);
+  const fromDateTime = Converters.convertToDateTime(point.dateFrom);
+  const fromTime = Converters.convertToTime(point.dateFrom);
+  const toDateTime = Converters.convertToDateTime(point.dateTo);
+  const toTime = Converters.convertToTime(point.dateTo);
 
   // Создаем темплейты для опций
   const offerTemplates = createOfferTemplates(offerObjs);
@@ -57,6 +57,8 @@ const createTemplate = (point) => {
   </li>`;
 };
 
+const rollupSelector = '.event__rollup-btn';
+
 export default class TripEventView extends AbstractView {
   #tripPoint = null;
 
@@ -67,5 +69,10 @@ export default class TripEventView extends AbstractView {
 
   get template() {
     return createTemplate(this.#tripPoint);
+  }
+
+  setRollupClickHandler(callback) {
+    this._callback.rollupClick = callback;
+    this.element.querySelector(rollupSelector).addEventListener('click', this._callback.rollupClick);
   }
 }

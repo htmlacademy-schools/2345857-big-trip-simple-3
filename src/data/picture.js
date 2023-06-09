@@ -1,4 +1,9 @@
-export const createPicture = (src, description) => ({
-  src: src,
-  description: description
-});
+export default class Picture {
+  src = '';
+  description = '';
+
+  constructor(src, description) {
+    this.src = src;
+    this.description = description;
+  }
+}
