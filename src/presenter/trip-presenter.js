@@ -12,19 +12,31 @@ export default class TripPresenter {
   #tripListView = new TripEventsListView();
   #tripSortView = new TripEventsSortView(this.#sorts);
   #pointPresenters = new Map();
-  #tripEventsComponent = null;
-  #tripPoints = [];
-  #tripPointsModel = null;
+  #tripEventsComponent;
+
+  #pointModel;
+  #destinationModel;
+  #offersModel;
+
   #currentSortType = Constants.SortTypes.DAY;
 
-  constructor(tripEventsComponent, tripPointsModel) {
+  constructor(tripEventsComponent, pointModel, destinationModel, offersModel) {
     this.#tripEventsComponent = tripEventsComponent;
-    this.#tripPointsModel = tripPointsModel;
-    this.#tripPoints = [...this.#tripPointsModel.getTripPoints()];
+    this.#pointModel = pointModel;
+    this.#destinationModel = destinationModel;
+    this.#offersModel = offersModel;
   }
 
-  get tripPoints() {
-    return this.#tripPoints.sort(this.#sorts[this.#currentSortType]);
+  get points() {
+    return this.#pointModel.points.sort(this.#sorts[this.#currentSortType]);
+  }
+
+  get destinations() {
+    return this.#destinationModel.destinations;
+  }
+
+  get offers() {
+    return this.#offersModel.offers;
   }
 
   #renderPoint = (tripPoint) => {
@@ -33,7 +45,9 @@ export default class TripPresenter {
       tripPoint,
       () => {
         this.#pointPresenters.forEach((it) => it.resetView());
-      }
+      },
+      this.destinations,
+      this.offers,
     );
     pointPresenter.init();
     this.#pointPresenters.set(tripPoint.id, pointPresenter);
@@ -46,8 +60,8 @@ export default class TripPresenter {
 
   #renderPointList = () => {
     render(this.#tripListView, this.#tripEventsComponent);
-    for (let i = 0; i < this.tripPoints.length; i++) {
-      this.#renderPoint(this.tripPoints[i]);
+    for (let i = 0; i < this.points.length; i++) {
+      this.#renderPoint(this.points[i]);
     }
   };
 
@@ -68,7 +82,8 @@ export default class TripPresenter {
   };
 
   init = () => {
-    if (this.#tripPoints.length !== 0) {
+    if (this.points.length !== 0) {
+      console.log(this.points);
       this.#renderSortView();
       this.#renderPointList();
     } else {

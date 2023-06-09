@@ -1,5 +1,3 @@
-import { getDestination } from '../mock/mock-destination.js';
-import { getOffers } from '../mock/mock-offer.js';
 import Converters from '../utils/converters.js';
 import AbstractView from '../framework/view/abstract-view';
 
@@ -11,12 +9,12 @@ const createOfferTemplates = (offers) =>
     </li>
   `).join('\n');
 
-const createTemplate = (point) => {
-  const { destination, offers, type, basePrice } = point;
+const createTemplate = (point, destinations, offersDict) => {
+  const { offers, type, basePrice } = point;
 
   // Получаем направления и опции по их ID
-  const destinationObj = getDestination(destination);
-  const offerObjs = getOffers(type).filter((it) => (it.id in offers));
+  const destinationObj = destinations.find((it) => it.id === point.destination);
+  const offerObjs = offersDict.find((e) => e.type === type) || { offers: [] };
 
   // Даты и время
   const eventDateTime = Converters.convertToEventDateTime(point.dateFrom);
@@ -27,7 +25,7 @@ const createTemplate = (point) => {
   const toTime = Converters.convertToTime(point.dateTo);
 
   // Создаем темплейты для опций
-  const offerTemplates = createOfferTemplates(offerObjs);
+  const offerTemplates = createOfferTemplates(offerObjs.offers.filter((it) => offers.includes(it.id)));
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -61,14 +59,19 @@ const rollupSelector = '.event__rollup-btn';
 
 export default class TripEventView extends AbstractView {
   #tripPoint = null;
+  #destinations = null;
+  #offers = null;
 
-  constructor(tripPoint) {
+  constructor(point, destinations, offers) {
     super();
-    this.#tripPoint = tripPoint;
+    this.#tripPoint = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    console.log(offers)
   }
 
   get template() {
-    return createTemplate(this.#tripPoint);
+    return createTemplate(this.#tripPoint, this.#destinations, this.#offers);
   }
 
   setRollupClickHandler(callback) {

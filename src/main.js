@@ -1,15 +1,20 @@
-import { render } from './framework/render.js';
-import TripPresenter from './presenter/trip-presenter.js';
-import TripEventsFilterView from './view/trip-events-filter-view.js';
-import TripPointModel from './model/trip-point-model.js';
-import {getMockFilters} from './mock/mock-filters';
+import PointModel from './model/point-model.js';
+import TripAPIService from './services/TripAPIService';
+import Constants from './const';
+import DestinationModel from './model/destination-model';
+import OffersModel from './model/offers-model';
+import Application from './application';
 
-const tripControlsFiltersComponent = document.querySelector('.trip-controls__filters');
-const tripEventsComponent = document.querySelector('.trip-events');
+const MOCK_LAUNCH = true;
 
-const tripPointsModel = new TripPointModel();
-const tripPresenter = new TripPresenter(tripEventsComponent, tripPointsModel);
+if (MOCK_LAUNCH) {
+  Application.Mock().launch();
+} else {
+  const apiService = new TripAPIService(Constants.API_ENDPOINT, Constants.AUTHORIZATION_HEADER);
 
-render(new TripEventsFilterView(getMockFilters()), tripControlsFiltersComponent);
-
-tripPresenter.init();
+  new Application(
+    new PointModel(apiService),
+    new DestinationModel(apiService),
+    new OffersModel(apiService)
+  ).launch();
+}
