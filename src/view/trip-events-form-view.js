@@ -1,6 +1,7 @@
 import { getAllDestinations, getDestination } from '../mock/mock-destination.js';
 import Converters from '../utils/converters.js';
 import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 
 const createDestinationTemplates = (destinations) =>
   destinations.map((it) => `<option value=${it.name}></option>`).join('');
@@ -8,20 +9,22 @@ const createDestinationTemplates = (destinations) =>
 const createPictureTemplates = (pictures) =>
   pictures.map((it) => `<img class="event__photo" src="${it.src}" alt="${it.description}">`).join('');
 
-const createTemplate = (point) => {
+const createTemplate = (point, destinations, offers) => {
   const { type } = point;
 
-  const allDestinations = getAllDestinations();
-  const destination = getDestination(point.destination);
+  const destination = destinations.find((it) => it.id === point.destination);
 
-  const destinationsTemplates = createDestinationTemplates(allDestinations);
+  const destinationsTemplates = createDestinationTemplates(destinations);
+
+  const usableOffers = offers.find((it) => it.type === type);
+  const usableOffersArray = usableOffers ? usableOffers.offers : [];
 
   return `<form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${point.type}.png" alt="Event type icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -89,10 +92,10 @@ const createTemplate = (point) => {
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${Converters.convertToFormDate(point.dateFrom)} ${Converters.convertToTime(point.date_from)}">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${Converters.convertToFormDate(point.dateFrom)} ${Converters.convertToTime(point.dateFrom)}">
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${Converters.convertToFormDate(point.dateTo)} ${Converters.convertToTime(point.date_to)}">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${Converters.convertToFormDate(point.dateTo)} ${Converters.convertToTime(point.dateTo)}">
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -175,16 +178,20 @@ const createTemplate = (point) => {
 const saveSelector = '.event__save-btn';
 const resetSelector = '.event__reset-btn';
 
-export default class TripEventsFormView extends AbstractView {
-  #tripPoint = null;
+export default class TripEventsFormView extends AbstractStatefulView {
+  #point = null;
+  #destinations = null;
+  #offers = null;
 
-  constructor(tripPoint) {
+  constructor(point, destinations, offers) {
     super();
-    this.#tripPoint = tripPoint;
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
   }
 
   get template() {
-    return createTemplate(this.#tripPoint);
+    return createTemplate(this.#point, this.#destinations, this.#offers);
   }
 
   setSaveClickHandler(callback) {

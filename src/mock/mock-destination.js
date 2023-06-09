@@ -11,12 +11,3 @@ export const getRandomDestination = (id) =>
     DEST_NAMES[id],
     generateRandomPictures()
   );
-
-const destinations = [];
-
-for (let i = 0; i < 10; i++) {
-  destinations.push(getRandomDestination(i));
-}
-
-export const getDestination = (id) => destinations[id];
-export const getAllDestinations = () => destinations;

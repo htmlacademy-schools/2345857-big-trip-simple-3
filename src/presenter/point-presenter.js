@@ -9,10 +9,14 @@ const UiState = {
 
 export default class PointPresenter {
   #uiState = UiState.DEFAULT;
-  #container = null;
+  #container;
 
-  #tripView = null;
-  #tripFormView = null;
+  #tripView;
+  #tripFormView;
+
+  #destinations;
+  #offers;
+
   #onStateChangeCallback = () => {};
 
   get uiState() { return this.#uiState; }
@@ -32,11 +36,13 @@ export default class PointPresenter {
     this.#uiState = value;
   }
 
-  constructor(container, point, onStateChangeCallback) {
+  constructor(container, point, onStateChangeCallback, destinations, offers) {
     this.#container = container;
-    this.#tripView = new TripEventView(point);
-    this.#tripFormView = new TripEventsFormView(point);
+    this.#tripView = new TripEventView(point, destinations, offers);
+    this.#tripFormView = new TripEventsFormView(point, destinations, offers);
     this.#onStateChangeCallback = onStateChangeCallback;
+    this.#destinations = destinations;
+    this.#offers = offers;
   }
 
   #replacePointToForm = () => {
