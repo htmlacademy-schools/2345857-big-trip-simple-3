@@ -1,13 +1,13 @@
-import { createDestination } from '../data/destination';
+import Destination from '../data/destination';
 import { generateRandomPictures } from './mock-pictures';
-import { generateRandomDescription } from './utils/random';
+import RandomUtils from './utils/random-utils';
 
 const DEST_NAMES = ['Tokyo', 'Osaka', 'Moscow', 'New&nbsp;York', 'Seoul', 'Mondstadt', 'Inazuma', 'Sumeru&nbsp;City', 'Liyue', 'Sydney'];
 
 export const getRandomDestination = (id) =>
-  createDestination(
+  new Destination(
     id,
-    generateRandomDescription(),
+    RandomUtils.generateRandomDescription(),
     DEST_NAMES[id],
     generateRandomPictures()
   );

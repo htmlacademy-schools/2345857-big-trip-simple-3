@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import { render, replace } from '../framework/render.js';
 
 import TripEventsFormView from '../view/trip-events-form-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
@@ -22,36 +22,32 @@ export default class TripPresenter {
     const tripView = new TripEventView(tripPoint);
     const tripFormView = new TripEventsFormView(tripPoint);
 
-    const replacePointToForm = () => {
-      this.#tripListView.element.replaceChild(tripFormView.element, tripView.element);
-    };
+    const replacePointToForm = () => replace(tripFormView, tripView);
 
-    const replaceFormToPoint = () => {
-      this.#tripListView.element.replaceChild(tripView.element, tripFormView.element);
-    };
+    const replaceFormToPoint = () => replace(tripView, tripFormView);
 
-    const closeEditFormOnEcsapeKey = (event) => {
+    const closeEditFormOnEscapeKey = (event) => {
       if (event.key === 'Escape') {
         event.preventDefault();
         replaceFormToPoint();
-        document.body.removeEventListener('keydown', closeEditFormOnEcsapeKey);
+        document.body.removeEventListener('keydown', closeEditFormOnEscapeKey);
       }
     };
 
-    tripView.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    tripView.setRollupClickHandler(() => {
       replacePointToForm();
-      document.body.addEventListener('keydown', closeEditFormOnEcsapeKey);
+      document.body.addEventListener('keydown', closeEditFormOnEscapeKey);
     });
 
-    tripFormView.element.querySelector('.event__save-btn').addEventListener('click', (evt) => {
+    tripFormView.setSaveClickHandler((evt) => {
       evt.preventDefault();
       replaceFormToPoint();
-      document.body.removeEventListener('keydown', closeEditFormOnEcsapeKey);
+      document.body.removeEventListener('keydown', closeEditFormOnEscapeKey);
     });
 
-    tripFormView.element.querySelector('.event__reset-btn').addEventListener('click', () => {
+    tripFormView.setResetClickHandler(() => {
       replaceFormToPoint();
-      document.body.removeEventListener('keydown', closeEditFormOnEcsapeKey);
+      document.body.removeEventListener('keydown', closeEditFormOnEscapeKey);
     });
 
     render(tripView, this.#tripListView.element);

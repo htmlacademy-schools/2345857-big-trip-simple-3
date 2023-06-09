@@ -1,5 +1,5 @@
-import AbstractView from './abstract-view.js';
-import { createElement, render } from '../render.js';
+import AbstractView from '../framework/view/abstract-view';
+import { createElement, render } from '../framework/render.js';
 
 const createListTemplate = () => `
   <ul class="trip-events__list"></ul>

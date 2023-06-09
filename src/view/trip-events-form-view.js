@@ -1,6 +1,6 @@
 import { getAllDestinations, getDestination } from '../mock/mock-destination.js';
-import { convertToFormDate, convertToTime } from '../utils/converters.js';
-import AbstractView from './abstract-view.js';
+import Converters from '../utils/converters.js';
+import AbstractView from '../framework/view/abstract-view';
 
 const createDestinationTemplates = (destinations) =>
   destinations.map((it) => `<option value=${it.name}></option>`).join('');
@@ -89,10 +89,10 @@ const createTemplate = (point) => {
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${convertToFormDate(point.dateFrom)} ${convertToTime(point.date_from)}">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${Converters.convertToFormDate(point.dateFrom)} ${Converters.convertToTime(point.date_from)}">
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${convertToFormDate(point.dateTo)} ${convertToTime(point.date_to)}">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${Converters.convertToFormDate(point.dateTo)} ${Converters.convertToTime(point.date_to)}">
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -172,6 +172,9 @@ const createTemplate = (point) => {
   </form>`;
 };
 
+const saveSelector = '.event__save-btn';
+const resetSelector = '.event__reset-btn';
+
 export default class TripEventsFormView extends AbstractView {
   #tripPoint = null;
 
@@ -182,5 +185,15 @@ export default class TripEventsFormView extends AbstractView {
 
   get template() {
     return createTemplate(this.#tripPoint);
+  }
+
+  setSaveClickHandler(callback) {
+    this._callback.saveClick = callback;
+    this.element.querySelector(saveSelector).addEventListener('click', this._callback.saveClick);
+  }
+
+  setResetClickHandler(callback) {
+    this._callback.resetClick = callback;
+    this.element.querySelector(resetSelector).addEventListener('click', this._callback.resetClick);
   }
 }
