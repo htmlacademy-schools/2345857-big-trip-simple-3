@@ -5,7 +5,7 @@ import DestinationModel from './model/destination-model';
 import OffersModel from './model/offers-model';
 import Application from './application';
 
-const MOCK_LAUNCH = true;
+const MOCK_LAUNCH = false;
 
 if (MOCK_LAUNCH) {
   Application.Mock().launch();
