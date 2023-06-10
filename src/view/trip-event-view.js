@@ -1,5 +1,6 @@
 import Converters from '../utils/converters.js';
 import AbstractView from '../framework/view/abstract-view';
+import Point from '../data/point';
 
 const createOfferTemplates = (offers) =>
   offers.map((it) => `
@@ -62,20 +63,16 @@ export default class TripEventView extends AbstractView {
   #destinations = null;
   #offers = null;
 
-  constructor(point, destinations, offers) {
+  constructor(point, destinations, offers, onRollupClickCallback) {
     super();
-    this.#tripPoint = point;
+    this.#tripPoint = point ? point : new Point();
     this.#destinations = destinations;
     this.#offers = offers;
-    console.log(offers)
+    this._callback.rollupClick = onRollupClickCallback;
+    this.element.querySelector(rollupSelector).addEventListener('click', this._callback.rollupClick);
   }
 
   get template() {
     return createTemplate(this.#tripPoint, this.#destinations, this.#offers);
-  }
-
-  setRollupClickHandler(callback) {
-    this._callback.rollupClick = callback;
-    this.element.querySelector(rollupSelector).addEventListener('click', this._callback.rollupClick);
   }
 }

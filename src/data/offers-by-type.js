@@ -8,4 +8,6 @@ export default class OffersByType {
     this.type = type;
     this.offers = offers;
   }
+
+  static findOffersForType = (offers, type) => offers.find((it) => it.type === type);
 }

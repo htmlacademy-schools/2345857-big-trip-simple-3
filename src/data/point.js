@@ -1,15 +1,21 @@
-import Offer from './offer';
-
 export default class Point {
-  basePrice = 0;
-  dateFrom = Date.now();
-  dateTo = Date.now();
-  destination = '';
-  id = 0;
-  offers = [new Offer()];
-  type = '';
+  basePrice;
+  dateFrom;
+  dateTo;
+  destination;
+  id;
+  offers;
+  type;
 
-  constructor(basePrice, dateFrom, dateTo, destination, id, offers, type) {
+  constructor(
+    basePrice = 1,
+    dateFrom = new Date().toISOString(),
+    dateTo = new Date().toISOString(),
+    destination = 1,
+    id = 1,
+    offers = [],
+    type = 'flight'
+  ) {
     this.basePrice = basePrice;
     this.dateFrom = dateFrom;
     this.dateTo = dateTo;
