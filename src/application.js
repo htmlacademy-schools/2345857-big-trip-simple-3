@@ -1,5 +1,3 @@
-import TripEventsFilterView from './view/trip-events-filter-view';
-import {getMockFilters} from './mock/mock-filters';
 import TripPresenter from './presenter/trip-presenter';
 import {render} from './framework/render';
 import MockPointModel from './mock/model/mock-point-model';
@@ -7,6 +5,7 @@ import MockDestinationModel from './mock/model/mock-destination-model';
 import MockOffersModel from './mock/model/mock-offers-model';
 import FilterModel from './model/filter-model';
 import CreatorButtonView from './view/creator-button-view';
+import FilterPresenter from './presenter/filter-presenter';
 
 export default class Application {
   #pointModel;
@@ -19,7 +18,7 @@ export default class Application {
   #headerComponent = document.querySelector('.trip-main');
 
   #tripPresenter;
-  #filtersView;
+  #filterPresenter;
 
   #creatorButtonView = new CreatorButtonView(() => {
     this.#tripPresenter.createEvent();
@@ -41,9 +40,9 @@ export default class Application {
   }
 
   #initModels = async () => {
-    this.#pointModel.init();
-    this.#destinationModel.init();
-    this.#offersModel.init();
+    await this.#pointModel.init();
+    await this.#destinationModel.init();
+    await this.#offersModel.init();
   };
 
   launch = () => {
@@ -57,8 +56,9 @@ export default class Application {
         this.#creatorButtonView.element.disabled = false;
       }
     );
-    this.#filtersView = new TripEventsFilterView(getMockFilters());
-    render(this.#filtersView, this.#tripControlsFiltersComponent);
+
+    this.#filterPresenter = new FilterPresenter(this.#tripControlsFiltersComponent, this.#filterModel, this.#pointModel);
+
     this.#initModels().finally(() => render(this.#creatorButtonView, this.#headerComponent));
     this.#tripPresenter.init();
   };

@@ -4,11 +4,12 @@ import TripEventsListView from '../view/trip-events-list-view.js';
 import TripEventsSortView from '../view/trip-events-sort-view.js';
 import TripEmptyView from '../view/trip-empty-view.js';
 import PointPresenter from './point-presenter';
-import { sorts } from '../utils/sort.js';
+import {sorts} from '../utils/sort.js';
 import Constants from '../const';
 import UiBlocker from '../framework/ui-blocker/ui-blocker';
 import PreloaderView from '../view/preloader-view';
 import CreatorPresenter from './creator-presenter';
+import {getFilters} from '../utils/filters';
 
 export default class TripPresenter {
   #sorts = sorts;
@@ -52,7 +53,9 @@ export default class TripPresenter {
   }
 
   get points() {
-    return this.#pointModel.points.sort(this.#sorts[this.#currentSortType]);
+    return getFilters()[this.#filterModel.filter](
+      this.#pointModel.points.sort(this.#sorts[this.#currentSortType])
+    );
   }
 
   get destinations() {
