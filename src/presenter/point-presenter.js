@@ -1,6 +1,8 @@
 import {remove, render, replace} from '../framework/render';
 import TripEventView from '../view/trip-event-view';
 import TripEventsFormView from '../view/trip-events-form-view';
+import {compareDate} from '../utils/sort';
+import Constants from '../const';
 
 const UiState = {
   DEFAULT: 'DEFAULT',
@@ -14,8 +16,11 @@ export default class PointPresenter {
   #tripView;
   #tripFormView;
 
+  #point;
   #destinations;
   #offers;
+
+  #onDataChangeCallback;
 
   #onStateChangeCallback = () => {};
 
@@ -36,13 +41,13 @@ export default class PointPresenter {
     this.#uiState = value;
   }
 
-  constructor(container, point, onStateChangeCallback, destinations, offers) {
+  constructor(container, point, onStateChangeCallback, destinations, offers, onDataChangeCallback) {
     this.#container = container;
-    this.#tripView = new TripEventView(point, destinations, offers);
-    this.#tripFormView = new TripEventsFormView(point, destinations, offers);
     this.#onStateChangeCallback = onStateChangeCallback;
+    this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#onDataChangeCallback = onDataChangeCallback;
   }
 
   #replacePointToForm = () => {
@@ -55,6 +60,41 @@ export default class PointPresenter {
     document.body.removeEventListener('keydown', this.#closeEditFormOnEscapeKey);
   };
 
+  setSaving = () => {
+    if (this.uiState === UiState.EDITING) {
+      this.#tripFormView.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  };
+
+  setDeleting = () => {
+    if (this.uiState === UiState.EDITING) {
+      this.#tripFormView.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  };
+
+  setAborting = () => {
+    if (this.uiState === UiState.DEFAULT) {
+      this.#tripFormView.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#tripFormView.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#tripFormView.shake(resetFormState);
+  };
+
   #closeEditFormOnEscapeKey = (event) => {
     if (event.key === 'Escape') {
       event.preventDefault();
@@ -62,19 +102,48 @@ export default class PointPresenter {
     }
   };
 
+  #handleSave = (evt) => {
+    const isMinorUpdate = compareDate(this.#point.dateFrom, evt.dateFrom) !== 0 || this.#point.basePrice !== evt.basePrice;
+    this.#onDataChangeCallback(
+      Constants.UserAction.UPDATE_EVENT,
+      isMinorUpdate ? Constants.UpdateType.MINOR : Constants.UpdateType.PATCH,
+      evt,
+    );
+  };
+
+  #handleDeleteClick = (evt) => {
+    this.#onDataChangeCallback(
+      Constants.UserAction.DELETE_EVENT,
+      Constants.UpdateType.MINOR,
+      evt,
+    );
+  };
+
   init() {
-    this.#tripView.setRollupClickHandler(() => {
-      this.uiState = UiState.EDITING;
-    });
+    this.#tripFormView = new TripEventsFormView(
+      this.#point,
+      this.#destinations,
+      this.#offers,
+      (evt) => {
+        this.#handleSave(evt);
+      },
+      () => {
+        this.uiState = UiState.DEFAULT;
+      },
+      (evt) => {
+        this.#handleDeleteClick(evt);
+      }
+    );
 
-    this.#tripFormView.setSaveClickHandler((evt) => {
-      evt.preventDefault();
-      this.uiState = UiState.DEFAULT;
-    });
-
-    this.#tripFormView.setResetClickHandler(() => {
-      this.uiState = UiState.DEFAULT;
-    });
+    this.#tripView = new TripEventView(
+      this.#point,
+      this.#destinations,
+      this.#offers,
+      (evt) => {
+        evt.preventDefault();
+        this.uiState = UiState.EDITING;
+      }
+    );
 
     render(this.#tripView, this.#container);
   }

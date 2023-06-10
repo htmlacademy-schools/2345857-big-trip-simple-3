@@ -1,10 +1,13 @@
 import Point from '../data/point';
+import Observable from '../framework/observable';
+import Constants from '../const';
 
-export default class PointModel {
+export default class PointModel extends Observable {
   #points;
   #apiService;
 
   constructor(apiService) {
+    super();
     this.#apiService = apiService;
   }
 
@@ -14,6 +17,58 @@ export default class PointModel {
       this.#points = points.map(this.#createPointObject);
     } catch (err) {
       this.#points = [];
+    }
+    this._notify(Constants.UpdateType.INIT);
+  };
+
+  updatePoint = async (updateType, update) => {
+    const idx = this.#points.findIndex((event) => event.id === update.id);
+
+    if (idx === -1) {
+      throw new Error('Can\'t update non-existing point');
+    }
+
+    try {
+      const response = await this.#apiService.updatePoint(update);
+      const point = this.#createPointObject(response);
+      this.#points = [
+        ...this.#points.slice(0, idx),
+        point,
+        ...this.#points.slice(idx + 1),
+      ];
+      this._notify(updateType, point);
+    } catch (err) {
+      throw new Error('Can\'t update tripPoint');
+    }
+  };
+
+  addPoint = async (updateType, update) => {
+    try {
+      const response = await this.#apiService.addPoint(update);
+      const point = this.#createPointObject(response);
+      this.#points = [point, ...this.#points];
+      this._notify(updateType, point);
+    } catch (err) {
+      throw new Error('Can\'t add point');
+    }
+  };
+
+  deletePoint = async (updateType, update) => {
+    const idx = this.#points.findIndex((point) => point.id === update.id);
+
+    if (idx === -1) {
+      throw new Error('Can\'t delete non-existing point');
+    }
+
+    try {
+      await this.#apiService.deletePoint(update);
+      this.#points = [
+        ...this.#points.slice(0, idx),
+        ...this.#points.slice(idx + 1),
+      ];
+      this._notify(updateType);
+    } catch (err) {
+      throw new Error('Can\'t delete point');
     }
   };
 

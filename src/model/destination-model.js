@@ -1,10 +1,13 @@
 import Destination from '../data/destination';
+import Observable from '../framework/observable';
+import Constants from '../const';
 
-export default class DestinationModel {
+export default class DestinationModel extends Observable {
   #destinations;
   #apiService;
 
   constructor(apiService) {
+    super();
     this.#apiService = apiService;
   }
 
@@ -15,6 +18,7 @@ export default class DestinationModel {
     } catch (err) {
       this.#destinations = [];
     }
+    this._notify(Constants.UpdateType.INIT);
   };
 
   #createDestinationObject = (destination) =>

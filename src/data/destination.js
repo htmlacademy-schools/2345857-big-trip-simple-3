@@ -10,4 +10,7 @@ export default class Destination {
     this.name = name;
     this.pictures = pictures;
   }
+
+  static findDestinationById = (destinations, id) => destinations.find((it) => it.id === id);
+  static findDestinationByName = (destinations, name) => destinations.find((it) => it.name === name);
 }

@@ -1,7 +1,7 @@
 import Constants from '../const';
 import dayjs from 'dayjs';
 
-const compareDate = (a, b) => dayjs(a).toDate() - dayjs(b).toDate();
+export const compareDate = (a, b) => dayjs(a).toDate() - dayjs(b).toDate();
 const compareTime = (a, b) => {
   const aDate = dayjs(a);
   const bDate = dayjs(b);
