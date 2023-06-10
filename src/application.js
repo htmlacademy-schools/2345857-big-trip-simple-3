@@ -41,9 +41,9 @@ export default class Application {
   }
 
   #initModels = async () => {
-    await this.#pointModel.init();
-    await this.#destinationModel.init();
-    await this.#offersModel.init();
+    this.#pointModel.init();
+    this.#destinationModel.init();
+    this.#offersModel.init();
   };
 
   launch = () => {

@@ -17,21 +17,21 @@ export default class TripApiService extends ApiService {
   get destinations() { return this.#getResultFromEndpoint(DESTINATIONS_ENDPOINT); }
   get offers() { return this.#getResultFromEndpoint(OFFERS_ENDPOINT); }
 
-  updateTripEvent = async (tripPoint) => await ApiService.parseResponse(await this._load({
+  updatePoint = async (tripPoint) => await ApiService.parseResponse(await this._load({
     url: `points/${tripPoint.id}`,
     method: HttpMethods.PUT,
     body: JSON.stringify(this.#createRequestObject(tripPoint)),
     headers: new Headers({'Content-Type': 'application/json'}),
   }));
 
-  addTripEvent = async (tripPoint) => await ApiService.parseResponse(await this._load({
+  addPoint = async (tripPoint) => await ApiService.parseResponse(await this._load({
     url: 'points',
     method: HttpMethods.POST,
     body: JSON.stringify(this.#createRequestObject(tripPoint)),
     headers: new Headers({'Content-Type': 'application/json'}),
   }));
 
-  deleteTripEvent = async (tripPoint) => await this._load({
+  deletePoint = async (tripPoint) => await this._load({
     url: `points/${tripPoint.id}`,
     method: HttpMethods.DELETE,
   });

@@ -145,7 +145,7 @@ export default class TripPresenter {
       case Constants.UserAction.CREATE_EVENT:
         this.#creatorPresenter.setSaving();
         try {
-          await this.#pointModel.addTripPoint(updateType, update);
+          await this.#pointModel.addPoint(updateType, update);
         } catch (err) {
           this.#pointPresenters.get(update.id).setAborting();
         }
@@ -153,7 +153,7 @@ export default class TripPresenter {
       case Constants.UserAction.UPDATE_EVENT:
         this.#pointPresenters.get(update.id).setSaving();
         try {
-          await this.#pointModel.updateTripPoint(updateType, update);
+          await this.#pointModel.updatePoint(updateType, update);
         } catch (err) {
           this.#pointPresenters.get(update.id).setAborting();
         }
@@ -161,7 +161,7 @@ export default class TripPresenter {
       case Constants.UserAction.DELETE_EVENT:
         this.#pointPresenters.get(update.id).setDeleting();
         try {
-          await this.#pointModel.deleteTripPoint(updateType, update);
+          await this.#pointModel.deletePoint(updateType, update);
         } catch (err) {
           this.#pointPresenters.get(update.id).setAborting();
         }
